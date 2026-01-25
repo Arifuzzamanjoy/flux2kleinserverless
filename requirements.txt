@@ -1,0 +1,22 @@
+# RunPod SDK
+runpod~=1.7.9
+
+# PyTorch with CUDA support
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Diffusers and related packages (need dev version for Flux2KleinPipeline)
+git+https://github.com/huggingface/diffusers.git
+transformers>=4.40.0
+accelerate>=0.30.0
+
+# Image processing
+Pillow>=10.0.0
+
+# Hugging Face Hub
+huggingface_hub>=0.23.0
+
+# Additional requirements for FLUX.2
+sentencepiece>=0.1.99
+protobuf>=4.25.0
+safetensors>=0.4.0
