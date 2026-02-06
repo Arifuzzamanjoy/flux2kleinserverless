@@ -66,6 +66,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Security Scanning
     needs: validate-docker
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

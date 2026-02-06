@@ -4,7 +4,6 @@ runpod~=1.7.9
 # Diffusers and related packages
 transformers>=4.40.0
 accelerate>=0.30.0
-diffusers @ git+https://github.com/huggingface/diffusers.git
 
 # Image processing
 Pillow>=10.0.0

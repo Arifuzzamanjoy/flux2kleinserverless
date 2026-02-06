@@ -23,7 +23,8 @@ RUN pip install --upgrade pip
 
 # Copy and install Python dependencies
 COPY requirements.txt /requirements.txt
-RUN pip install --no-cache-dir -r /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt && \
+    pip install --no-cache-dir git+https://github.com/huggingface/diffusers.git
 
 # Copy handler
 COPY handler.py /handler.py
