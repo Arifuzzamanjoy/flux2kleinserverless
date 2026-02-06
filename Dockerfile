@@ -15,12 +15,15 @@ RUN ln -sf $(which python3.11) /usr/local/bin/python && \
 RUN apt-get update && apt-get install -y \
     git \
     wget \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip
+RUN pip install --upgrade pip
 
 # Copy and install Python dependencies
 COPY requirements.txt /requirements.txt
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
 
 # Copy handler
 COPY handler.py /handler.py

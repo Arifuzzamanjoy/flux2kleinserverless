@@ -1,14 +1,10 @@
 # RunPod SDK
 runpod~=1.7.9
 
-# PyTorch with CUDA support
-torch>=2.0.0
-torchvision>=0.15.0
-
-# Diffusers and related packages (need dev version for Flux2KleinPipeline)
-git+https://github.com/huggingface/diffusers.git
+# Diffusers and related packages
 transformers>=4.40.0
 accelerate>=0.30.0
+diffusers @ git+https://github.com/huggingface/diffusers.git
 
 # Image processing
 Pillow>=10.0.0
