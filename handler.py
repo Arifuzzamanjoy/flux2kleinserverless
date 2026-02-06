@@ -31,10 +31,16 @@ from diffusers.utils import load_image
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using device: {DEVICE}")
 
+# Get Hugging Face token from environment
+HF_TOKEN = os.environ.get("HF_TOKEN") or os.environ.get("HUGGING_FACE_HUB_TOKEN")
+if HF_TOKEN:
+    print("Using Hugging Face token for gated model access")
+
 # Load the FLUX.2 Klein pipeline
 pipe = Flux2KleinPipeline.from_pretrained(
     "black-forest-labs/FLUX.2-klein-4B",
     torch_dtype=torch.bfloat16,
+    token=HF_TOKEN,  # Pass token for gated models
 )
 pipe.enable_model_cpu_offload()  # Save VRAM by offloading to CPU
 
