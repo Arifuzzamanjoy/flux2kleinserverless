@@ -2,6 +2,8 @@
 
 A serverless worker for running [FLUX.2 Klein 4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B) text-to-image and image-to-image generation on RunPod.
 
+[![Docker CD](https://github.com/<YOUR_USERNAME>/Flux2_serverless/actions/workflows/docker-build-push.yml/badge.svg)](https://github.com/<YOUR_USERNAME>/Flux2_serverless/actions/workflows/docker-build-push.yml)
+
 ## 🚀 Features
 
 - **Text-to-image generation** using FLUX.2 Klein 4B
@@ -10,6 +12,40 @@ A serverless worker for running [FLUX.2 Klein 4B](https://huggingface.co/black-f
 - Runs on consumer GPUs (~13GB VRAM)
 - Configurable inference parameters
 - Reproducible results with seed control
+- **Automatic Docker builds via GitHub Actions**
+
+## 🐳 Quick Start - Automated Deployment
+
+### 1. Fork this repository
+Click the "Fork" button at the top right of this page.
+
+### 2. Set up Docker Hub token
+1. Create a Docker Hub access token at https://hub.docker.com/settings/security
+2. In your forked repository, go to **Settings** → **Secrets and variables** → **Actions**
+3. Create a new secret named `DOCKERHUB_TOKEN` with your token value
+
+### 3. Push to trigger build
+```bash
+git clone https://github.com/<YOUR_USERNAME>/Flux2_serverless.git
+cd Flux2_serverless
+# Make any changes you want
+git add .
+git commit -m "Initial deployment"
+git push origin main
+```
+
+The GitHub Actions workflow will automatically:
+- ✅ Build your Docker image
+- ✅ Push to Docker Hub as `s1710374103/flux2kleinserverless:tagname`
+- ✅ Create a `:latest` tag for easy updates
+
+### 4. Deploy to RunPod
+Use the Docker image URL in RunPod:
+```
+docker.io/s1710374103/flux2kleinserverless:tagname
+```
+
+See [.github/workflows/README.md](.github/workflows/README.md) for detailed setup instructions.
 
 ## 📁 Project Structure
 
@@ -65,44 +101,79 @@ A serverless worker for running [FLUX.2 Klein 4B](https://huggingface.co/black-f
 
 ## 🐳 Building & Pushing Docker Image
 
-### Using the build script:
+### Option 1: Automated Build (Recommended)
+**Use GitHub Actions** - See [Quick Start](#-quick-start---automated-deployment) above.
+
+### Option 2: Manual Build
+For advanced users who want to build locally:
+
+```bash
+# Build the image
+docker build --platform linux/amd64 -t s1710374103/flux2kleinserverless:tagname .
+
+# Login to Docker Hub
+docker login
+
+# Push to Docker Hub
+docker push s1710374103/flux2kleinserverless:tagname
+```
+
+Or use the provided build script:
 ```bash
 chmod +x build.sh
-./build.sh <your_dockerhub_username> latest
+./build.sh s1710374103 tagname
 ```
 
-### Manual build:
-```bash
-# Build
-docker build --platform linux/amd64 -t <username>/flux2-klein-serverless:latest .
-
-# Push
-docker push <username>/flux2-klein-serverless:latest
-```
+**Note:** Building locally requires a system with full Docker support and may take 10-15 minutes.
 
 ## 🚀 Deploying to RunPod
 
-### Option 1: Deploy via Docker Hub
+### Step 1: Get Your Docker Image URL
+After GitHub Actions builds your image (or manual build), use:
+```
+docker.io/s1710374103/flux2kleinserverless:tagname
+```
+
+### Step 2: Create RunPod Serverless Endpoint
 
 1. Go to [RunPod Serverless Console](https://www.runpod.io/console/serverless)
-2. Click **New Endpoint**
-3. Click **Import from Docker Registry**
-4. Enter your Docker image URL: `docker.io/<username>/flux2-klein-serverless:latest`
-5. Configure endpoint:
-   - **Endpoint Type:** Queue
-   - **GPU:** Select GPU with at least 24GB VRAM (recommended: A100, A6000, or RTX 4090)
-   - **Active Workers:** 0 (scale to zero when idle)
-   - **Max Workers:** Based on your needs
-6. Click **Deploy Endpoint**
+2. Click **"New Endpoint"**
+3. Choose **"Custom"** template
+4. Enter your Docker image URL from Step 1
+5. **Configure Endpoint:**
+   - **Name:** `flux2-klein-worker`
+   - **GPU Type:** Select GPU with at least 16GB VRAM (recommended: A5000, A6000, RTX 4090, or A100)
+   - **Container Disk:** 20GB minimum
+   - **Idle Timeout:** 5 seconds (to scale to zero quickly)
+   - **Active Workers:** 0 (scale to zero)
+   - **Max Workers:** Set based on your needs (e.g., 3)
+   - **GPUs per Worker:** 1
+6. Click **"Deploy"**
 
-### Option 2: Deploy via GitHub Integration
+### Step 3: Test Your Endpoint
 
-1. Push this repository to GitHub
-2. Go to RunPod Serverless Console
-3. Click **New Endpoint** → **Import from GitHub**
-4. Connect your GitHub account and select this repository
-5. Configure endpoint settings
-6. RunPod will automatically build and deploy on push
+Once deployed, you'll get an **Endpoint ID** and **API Key**. Test it:
+
+```bash
+curl -X POST "https://api.runpod.ai/v2/<ENDPOINT_ID>/runsync" \
+  -H "Authorization: Bearer <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input": {
+      "prompt": "A cat holding a sign that says hello world",
+      "width": 1024,
+      "height": 1024,
+      "num_inference_steps": 4
+    }
+  }'
+```
+
+### Alternative: Use RunPod GitHub Integration
+
+1. **Push this repository to GitHub**
+2. In RunPod Console, click **"New Endpoint"** → **"Import from GitHub"**
+3. **Connect your GitHub account** and select this repository
+4. RunPod will automatically build and deploy on every push
 
 ## 📡 API Usage
 
