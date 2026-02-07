@@ -7,10 +7,6 @@ ENV HF_HOME=/runpod-volume/.cache/huggingface
 ENV TRANSFORMERS_CACHE=/runpod-volume/.cache/huggingface
 ENV TORCH_HOME=/runpod-volume/.cache/torch
 
-# Set Python 3.11 as default
-RUN ln -sf $(which python3.11) /usr/local/bin/python && \
-    ln -sf $(which python3.11) /usr/local/bin/python3
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -18,20 +14,20 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip
-RUN pip install --upgrade pip
+# Upgrade pip for Python 3.11
+RUN python3.11 -m pip install --upgrade pip
 
 # Copy and install Python dependencies
 COPY requirements.txt /requirements.txt
-RUN pip install --no-cache-dir -r /requirements.txt && \
-    pip install --no-cache-dir git+https://github.com/huggingface/diffusers.git
+RUN python3.11 -m pip install --no-cache-dir -r /requirements.txt && \
+    python3.11 -m pip install --no-cache-dir git+https://github.com/huggingface/diffusers.git
 
 # Copy handler
 COPY handler.py /handler.py
 
 # Pre-download the model (optional - comment out if using network volumes)
 # This bakes the model into the image for faster cold starts
-# RUN python3 -c "from diffusers import Flux2KleinPipeline; Flux2KleinPipeline.from_pretrained('black-forest-labs/FLUX.2-klein-4B')"
+# RUN python3.11 -c "from diffusers import Flux2KleinPipeline; Flux2KleinPipeline.from_pretrained('black-forest-labs/FLUX.2-klein-4B')"
 
 # Start the handler
-CMD ["python", "-u", "/handler.py"]
+CMD ["python3.11", "-u", "/handler.py"]
