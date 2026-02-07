@@ -1,5 +1,5 @@
 # RunPod SDK
-runpod~=1.7.9
+runpod~=1.8.1
 
 # Diffusers and related packages
 transformers>=4.40.0
