@@ -196,12 +196,12 @@ curl -X POST "https://api.runpod.ai/v2/<ENDPOINT_ID>/runsync" \
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `prompt` | string | ✅ | - | Text description for image generation/transformation |
-| `image` | string | ❌ | - | Input image for editing (URL or base64) |
-| `height` | int | ❌ | 1024 | Output image height |
-| `width` | int | ❌ | 1024 | Output image width |
-| `num_inference_steps` | int | ❌ | 4 | Number of denoising steps (FLUX.2 Klein is distilled) |
-| `guidance_scale` | float | ❌ | 1.0 | Classifier-free guidance scale |
-| `seed` | int | ❌ | random | Seed for reproducibility |
+| `image` | string | ✅ | - | Input image for editing (URL or base64) |
+| `height` | int | ✅ | 1024 | Output image height |
+| `width` | int | ✅ | 1024 | Output image width |
+| `num_inference_steps` | int | ✅ | 4 | Number of denoising steps (FLUX.2 Klein is distilled) |
+| `guidance_scale` | float | ✅ | 1.0 | Classifier-free guidance scale |
+| `seed` | int | ✅ | random | Seed for reproducibility |
 
 ### Output Schema
 
